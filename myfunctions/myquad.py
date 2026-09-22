@@ -1,6 +1,8 @@
 import numpy as np
 import scipy as sp
 from scipy.special import p_roots
+from scipy.stats import qmc
+from scipy.stats import qmc
 
 def qtrapn(f,a,b,N,):
     h = (b-a)/N # interval steps
