@@ -1,5 +1,5 @@
 #!/bin/bash
-cd "$(dirname "$0")"
+cd "$(dirname "${BASH_SOURCE[0]}")"
 [ -d .venv ] || python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip -q
