@@ -57,7 +57,7 @@ def golden_search(func, a, b, tol):
 
 def powell_search(f, x_n, pset, N_max, N, T, tol):
     module_folder = Path(
-        "/Users/andersworm/Downloads/numerical methods/opgaver/102")
+        "/numerical methods/opgaver/102")
     #path to the folder where the module is located
 
     sys.path.insert(0, str(module_folder))  #tells python to look in the module folder for imports
