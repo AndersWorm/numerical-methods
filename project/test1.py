@@ -8,7 +8,7 @@ h= 2*np.pi /N
 E_j, E_c =1, 1/100 # since Ej>>Ec
 phi = np.linspace(- np.pi, np.pi, N, endpoint=False) 
 H=transmon_H(N, h, E_j, E_c, phi)
-E, U = sla.eigs(H, k=3, which='SM')
+E, U = sla.eigsh(H, k=3, which='SA') # I use the sparse matrix to find the eigenvalues and eigenvectors. k is the number of eigenvalues and eigenvectors to find. which='SA' means that I want the smallest algebraic eigenvalues.
 plt.plot(phi/(np.pi),U[:,0], label='Ground state') # the ground state wavefunction
 plt.plot(phi/(np.pi),U[:,1], label='First excited state') # the first excited state wavefunction
 plt.plot(phi/(np.pi),U[:,2], label='Second excited state') # the second excited state wavefunction
