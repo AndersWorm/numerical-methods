@@ -5,7 +5,8 @@ from scipy.sparse import linalg as sla
 #starting values
 N=1000
 h= 2*np.pi /N
-E_j, E_c =1, 1/100 # since Ej>>Ec
+E_c = 2*np.pi * 0.25   # rad/ns is E_c/h 0.25 GHz
+E_j = 2*np.pi * 12.5   # rad/ns # same as before is E_j/h 12.5 GHz
 phi = np.linspace(- np.pi, np.pi, N, endpoint=False) 
 H=transmon_H(N, h, E_j, E_c, phi)
 E, U = sla.eigsh(H, k=3, which='SA') # I use the sparse matrix to find the eigenvalues and eigenvectors. k is the number of eigenvalues and eigenvectors to find. which='SA' means that I want the smallest algebraic eigenvalues.
