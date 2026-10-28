@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.sparse import linalg as sla
-from rk4 import rk4solve
+from myfunctions import rk4solve
 from part2 import H_number, H_time
 
 def Dissipation(T, rho, gamma):
@@ -35,7 +35,7 @@ if __name__ == "__main__": # so that the code below only runs when this file is 
     w = E[1]-E[0] # the energy gap between the ground state and the first excited state
     A= U.T @ np.diag(N) @ U #the coupling term between the different states
     ### Solve the Lindblad equation using RK4
-    t,C = rk4solve(f, rho0, 0, 0.005, 600)
+    t,C = rk4solve(f, rho0, 0, 0.005, 200)
 
     plt.figure(figsize=(10, 6))
     plt.plot(t, C[:, 0, 0].real, label='|c0|^2')

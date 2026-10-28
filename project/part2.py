@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.sparse import linalg as sla
 from scipy import sparse as sp
-from rk4 import rk4solve
+from myfunctions import rk4solve
 #I use the number basis this time because it is easier to work with
 def H_number(N, Ec, Ej):
     M=len(N)-1 # since the upper and lower diagonal has 1 less element than the diagonal
