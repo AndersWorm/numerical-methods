@@ -16,7 +16,7 @@ E_c = 2*np.pi * 0.25   # rad/ns is E_c/h 0.25 GHz
 E_j = 2*np.pi * 12.5   # rad/ns # same as before is E_j/h 12.5 GHz
 N=np.arange(-10,11,1) # the number of Cooper pairs from -10 to 10
 t1, t2= 200, 150 # the relaxation and dephasing times in ns
-gamma=  np.array([1/t1,2 * (1/t2 - 1 / (2*t1))]) # the dissipation rates for the two levels
+gamma= 0 * np.array([1/t1,2 * (1/t2 - 1 / (2*t1))]) # the dissipation rates for the two levels
 T1 = np.array([[0,1,0],[0,0,np.sqrt(2)],[0,0,0]],dtype=complex) # the lowering operator a on 3 levels
 T2 = np.diag([0,1,2]) # adagger a 
 T = np.array([T1,T2]) # the array of the two operators
@@ -29,7 +29,7 @@ omega0= E_c/4  # the amplitude of the drive must be smaller than E_c
 H_num = H_number(N, E_c, E_j) # the hamiltonian in n basis
 E,U= sla.eigsh(H_num, k=3, which='SA') # the eigenvalues and eigenvectors in n basis
 H_0= np.diag(E,0)- E[0] * np.eye(3) # the diagonal matrix of the eigenvalues with the ground state energy subtracted so that the ground state energy is zero.
-w = E[1]-E[0] + 0.1 # the energy gap between the ground state and the first excited state
+w = E[1]-E[0] # the energy gap between the ground state and the first excited state
 A= U.T @ np.diag(N) @ U #the coupling term between the different states
 
 # makes a cost function that will tell me how close I am to the target state at the end of the gate time given a certain omega0
@@ -50,7 +50,6 @@ def f(t,rho): # the function that will be used in the RK4 method to solve the Li
     H = H_time(t,H_0,A,omega,w)
     return Lindblad(T, rho, H, gamma)
 t_L,C_L = rk4solve(f, rho0, 0, dT_g, T_g)
-t_L,C_L = rk4solve(f, rho0, 0, dT_g, T_g)
 print(f"The optimal omega0 is: {omega_opt[0]:.6f} rad/ns which is {omega_opt[0]/(2*np.pi):.6f} GHz and the population of the first excited state at the end of the gate time is: {C_L[-1, 1, 1].real:.6f}")
 plt.figure(figsize=(10,6))
 plt.plot(t_L, C_L[:, 0, 0].real, label='|c0|^2')
@@ -65,3 +64,4 @@ plt.show()
 # at T=10ns the population of the first excited state is 0.97 at the end of the gate time which is not perfect.
 # To improve I could do 2d optimization where I optimize both the amplitude and the drive frequency.
 #if I add 0.1 to the drive frequency I can get a population of 0.999 at the end of the gate time which is much better. Without leakage.
+# this parameter can be found by powell search.
