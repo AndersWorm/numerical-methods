@@ -43,40 +43,41 @@ def cost(omega0,w): # makes a cost function that will tell me how close I am to 
     P1 = C_L[:, 1, 1].real
     cost_value= 1-P1[-1] # the cost function is 1-P1 at the end of the gate time
     return cost_value
-x0 = np.array([omega0,w]) # the initial guess for omega0 and w
-pset = np.eye(2) # the initial direction vectors are the unit vectors in 2D meaning I will first only change omega0 and then only change w
-n= 10 # the number of points to use in the minimum_finder function
-N_max = 10 # the maximum number of sweeps to use in the powell_search
-tol = 1e-4 # the tolerance for the powell_search
-T_p=5 # it will search in the radius T_p*dx_i
-dOmega = 0.1 * omega0 # the step size for omega0
-dw = 0.2/ sigma # the step size for w 1/sigma is approximately the width of the resonance valley in the cost function. So I will use 0.2/sigma as the step size for w to make sure I do not miss the minimum.
-scale = np.array([dOmega, dw])
-x_min, f_min, sweeps = powell_search(cost, x0, pset, N_max, n, T_p, tol, scale=scale)
-print(f"The optimal omega0 is {x_min[0]/(2*np.pi):.6f} GHz and the optimal w is: is {x_min[1]/(2*np.pi):.6f} GHz which differs from qubit resonance without drive by: {x_min[1]/(2*np.pi)-x0[1]/(2*np.pi):.6f} GHz and the population of the first excited state at the end of the gate time is: {1-f_min:.6f}")
-omega0_opt, w_opt = x_min
-def f(t,rho): # the function that will be used in the RK4 method to solve the Lindblad equation
-    omega = omega0_opt*gaussian(t,mu,sigma)
-    H = H_time(t,H_0,A,omega,w_opt)
-    return Lindblad(T, rho, H, gamma)
-t_L,C_L = rk4solve(f, rho0, 0, dT_g, T_g)
-plt.figure(figsize=(10,6))
-plt.plot(t_L, C_L[:, 0, 0].real, label='|c0|^2')
-plt.plot(t_L, C_L[:, 1, 1].real, label='|c1|^2')
-plt.plot(t_L, C_L[:, 2, 2].real, label='|c2|^2')
-plt.xlabel('Time (ns)')
-plt.ylabel('Population')
-plt.title('Population Dynamics of a Three-Level System with lindblad Dissipation')
-plt.legend()
-plt.grid()
-plt.show()
-# From 1D optimization without dissipation I got the optimal omega0 to be 0.110584 GHz and the population of the first excited state at the end of the gate time is: 0.971586
-#From 2D optimization without dissipation I got the optimal omega0 to be 0.113141 GHz and the optimal w is: is 4.750278 GHz which differs from qubit resonance without drive by: 0.014798 GHz and the population of the first excited state at the end of the gate time is: 0.999380
-# the optimal omega0 is almost the same as the 1D optimization and the optimal w is very close to the qubit resonance without drive.
-#but the little difference 0.3% in w makes a big difference in the population of the first excited state at the end of the gate time which is almost 3% better and as close to 1 as possible. 
-# This is because the drive frequency is not exactly on resonance with the qubit transition frequency due to the AC Stark shift caused by the drive. 
-# T_g can be made smaller to make the gate faster but then the drive amplitude has to be increased to make sure the rotation angle is pi.
-# This will cause more leakage to the second excited state and the population of the first excited state at the end of the gate time will be smaller.
-# A bigger T_g will make the gate slower so a smaller drive amplitude can be used making the leakage to the second excited state smaller.
-# But dissipation will have more time so the population of the first excited state at the end of the gate time will be smaller. Population from first exited state leak to the ground state.
-# Powell search could extend to 3D optimization including T_g as a parameter when dissipation is included. I wont do that but I tried T_g = 5, 10 and 20 ns and found that T_g = 10 ns is the best compromise between leakage and dissipation.
+if __name__ == "__main__":
+    x0 = np.array([omega0,w]) # the initial guess for omega0 and w
+    pset = np.eye(2) # the initial direction vectors are the unit vectors in 2D meaning I will first only change omega0 and then only change w
+    n= 10 # the number of points to use in the minimum_finder function
+    N_max = 10 # the maximum number of sweeps to use in the powell_search
+    tol = 1e-4 # the tolerance for the powell_search
+    T_p=5 # it will search in the radius T_p*dx_i
+    dOmega = 0.1 * omega0 # the step size for omega0
+    dw = 0.2/ sigma # the step size for w 1/sigma is approximately the width of the resonance valley in the cost function. So I will use 0.2/sigma as the step size for w to make sure I do not miss the minimum.
+    scale = np.array([dOmega, dw])
+    x_min, f_min, sweeps = powell_search(cost, x0, pset, N_max, n, T_p, tol, scale=scale)
+    print(f"The optimal omega0 is {x_min[0]/(2*np.pi):.6f} GHz and the optimal w is: is {x_min[1]/(2*np.pi):.6f} GHz which differs from qubit resonance without drive by: {x_min[1]/(2*np.pi)-x0[1]/(2*np.pi):.6f} GHz and the population of the first excited state at the end of the gate time is: {1-f_min:.6f}")
+    omega0_opt, w_opt = x_min
+    def f(t,rho): # the function that will be used in the RK4 method to solve the Lindblad equation
+        omega = omega0_opt*gaussian(t,mu,sigma)
+        H = H_time(t,H_0,A,omega,w_opt)
+        return Lindblad(T, rho, H, gamma)
+    t_L,C_L = rk4solve(f, rho0, 0, dT_g, T_g)
+    plt.figure(figsize=(10,6))
+    plt.plot(t_L, C_L[:, 0, 0].real, label='|c0|^2')
+    plt.plot(t_L, C_L[:, 1, 1].real, label='|c1|^2')
+    plt.plot(t_L, C_L[:, 2, 2].real, label='|c2|^2')
+    plt.xlabel('Time (ns)')
+    plt.ylabel('Population')
+    plt.title('Population Dynamics of a Three-Level System with lindblad Dissipation')
+    plt.legend()
+    plt.grid()
+    plt.show()
+    # From 1D optimization without dissipation I got the optimal omega0 to be 0.110584 GHz and the population of the first excited state at the end of the gate time is: 0.971586
+    #From 2D optimization without dissipation I got the optimal omega0 to be 0.113141 GHz and the optimal w is: is 4.750278 GHz which differs from qubit resonance without drive by: 0.014798 GHz and the population of the first excited state at the end of the gate time is: 0.999380
+    # the optimal omega0 is almost the same as the 1D optimization and the optimal w is very close to the qubit resonance without drive.
+    #but the little difference 0.3% in w makes a big difference in the population of the first excited state at the end of the gate time which is almost 3% better and as close to 1 as possible. 
+    # This is because the drive frequency is not exactly on resonance with the qubit transition frequency due to the AC Stark shift caused by the drive. 
+    # T_g can be made smaller to make the gate faster but then the drive amplitude has to be increased to make sure the rotation angle is pi.
+    # This will cause more leakage to the second excited state and the population of the first excited state at the end of the gate time will be smaller.
+    # A bigger T_g will make the gate slower so a smaller drive amplitude can be used making the leakage to the second excited state smaller.
+    # But dissipation will have more time so the population of the first excited state at the end of the gate time will be smaller. Population from first exited state leak to the ground state.
+    # Powell search could extend to 3D optimization including T_g as a parameter when dissipation is included. I wont do that but I tried T_g = 5, 10 and 20 ns and found that T_g = 10 ns is the best compromise between leakage and dissipation.

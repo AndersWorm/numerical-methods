@@ -24,9 +24,9 @@ mu = T_g/2 # the amplitude is at its maximum at half of the gate time
 sigma = T_g/6 # make sure it is close to zero in the start and end
 
 H_num = H_number(N, E_c, E_j) # the hamiltonian in n basis
-E,U= sla.eigsh(H_num, k=3, which='SA') # the eigenvalues and eigenvectors in n basis
+E,U= sla.eigsh(H_num, k=3, which='SA') # the eigenvalues  and eigenvectors in n basis
 H_0= np.diag(E,0)- E[0] * np.eye(3) # the diagonal matrix of the eigenvalues with the ground state energy subtracted so that the ground state energy is zero.
-w = E[1]-E[0]  # Taken from part 4.
+w = E[1] - E[0]
 A= U.T @ np.diag(N) @ U #the coupling term between the different states
 omega= E_c/20# the amplitude of the drive must be smaller than E_c  # the amplitude of the drive in rad/ns taken from part 4
 
@@ -64,5 +64,5 @@ plt.title('Population Dynamics of a Three-Level System with lindblad Dissipation
 plt.legend()
 plt.grid()
 print(f"Fitted parameters: gamma = {par[0]:.4f}, Rabi frequency = {par[1]:.4f} , offset = {par[2]:.4f} ") 
-print(f"actual omega0 is {omega / (2*np.pi):.6f}  GHz, fitted omega0 is {omega_fit/(2*np.pi):.6f} GHz which differs from actual omega0 by {omega_fit/(2*np.pi)-omega/(2*np.pi):.6f} GHz")
+print(f"actual omega0 is {omega / (2*np.pi):.6f}  GHz, fitted omega0 is {omega_fit/(2*np.pi):.6f} GHz which differs from actual omega0 by {abs(omega_fit/(2*np.pi)-omega/(2*np.pi)):.6f} GHz")
 plt.show()
