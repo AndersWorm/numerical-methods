@@ -37,6 +37,7 @@ plt.xlabel('$\phi$ / $\pi$')
 plt.ylabel('Wavefunction')
 plt.title('Wavefunctions of the first three states')
 plt.grid()
+plt.savefig("test1_part1_wavefunctions.png", dpi=200)
 print('Eigenvalues:', 'E0=', E[0], 'E1=', E[1], 'E2=', E[2]) # the eigenvalues of the hamiltonian
 print('Energy gap between ground state and first excited state:', 'DE_01=', E[1]-E[0]) 
 print('Energy gap between first excited state and second excited state:', 'DE_12=', E[2]-E[1]) 
@@ -62,6 +63,7 @@ plt.ylabel('Probability')
 plt.title('Population Dynamics of a Three-Level System without Lindblad Dissipation')
 plt.legend(loc='upper right')
 plt.grid()
+plt.savefig("test1_part2_rabi.png", dpi=200)
 
 #from part 3 now it is extended to Lindblad equation
 def f(t,rho): # the function that will be used in the RK4 method to solve the Lindblad equation
@@ -78,5 +80,7 @@ plt.ylabel('Population')
 plt.title('Population Dynamics of a Three-Level System with Lindblad Dissipation')
 plt.legend()
 plt.grid()
+for i in plt.get_fignums():
+    plt.figure(i).savefig(f"test1_fig{i}.png", dpi=200)
 
 plt.show()
